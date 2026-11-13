@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block public_content %}
+<div class="container py-2" style="max-width: 100%;">
+    <div class="d-flex justify-content-center align-items-center">
+        <div style="width: min(92vw, 440px); max-width: 440px; margin: 0 auto;">
+            <div class="glass-card shadow-lg position-relative" style="padding: clamp(1.25rem, 3.5vw, 2.5rem);">
+                <!-- Brand Mark & Header -->
+                <div class="text-center mb-3 mb-sm-4">
+                    <div class="sidebar-brand-icon mx-auto mb-2 mb-sm-3" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 14px;">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <h2 class="fs-4 fw-bold mb-1 text-main" style="font-size: var(--text-page-title) !important;">UMS Portal</h2>
+                    <p class="text-muted small mb-0">Sign in to your academic account</p>
+                </div>
+
+                <!-- Login Form -->
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.email.id }}" class="form-label small fw-semibold text-main">
+                            <i class="bi bi-envelope me-1 text-indigo"></i> University Email
+                        </label>
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control glass-input is-invalid", placeholder="name@ums.edu", autocomplete="email", inputmode="email") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control glass-input", placeholder="name@ums.edu", autocomplete="email", inputmode="email") }}
+                        {% endif %}
+                    </div>
+
+                    <!-- Password Field with Show/Hide Toggle -->
+                    <div class="mb-3">
+                        <label for="{{ form.password.id }}" class="form-label small fw-semibold text-main">
+                            <i class="bi bi-key me-1 text-violet"></i> Password
+                        </label>
+                        <div class="input-group">
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control glass-input is-invalid", id="loginPasswordInput", placeholder="Enter password", autocomplete="current-password") }}
+                                <button type="button" class="btn btn-glass password-toggle-btn border-start-0" data-target="loginPasswordInput" aria-label="Toggle password visibility" style="min-width: 44px; min-height: 44px;">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="form-control glass-input border-end-0", id="loginPasswordInput", placeholder="Enter password", autocomplete="current-password") }}
+                                <button type="button" class="btn btn-glass password-toggle-btn border-start-0" data-target="loginPasswordInput" aria-label="Toggle password visibility" style="min-width: 44px; min-height: 44px;">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Remember Me Option -->
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="form-check mb-0">
+                            {{ form.remember_me(class="form-check-input", style="min-width: 20px; min-height: 20px; cursor: pointer;") }}
+                            <label class="form-check-label small text-muted ps-1" for="{{ form.remember_me.id }}" style="cursor: pointer;">
+                                Remember my device
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid mb-3 mb-sm-4">
+                        <button type="submit" class="btn btn-primary fw-bold" style="min-height: 48px;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Portal
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Demo Credentials (Secondary Collapsible Block for Dev/Evaluation) -->
+                <div class="pt-3 border-top border-light border-opacity-25 text-center">
+                    <button class="btn btn-link btn-sm text-muted text-decoration-none p-2 small" type="button" data-bs-toggle="collapse" data-bs-target="#demoAccountsCollapse" aria-expanded="false" aria-controls="demoAccountsCollapse" style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-info-circle me-1"></i> Demo Credentials Guide
+                    </button>
+                    <div class="collapse mt-2 text-start" id="demoAccountsCollapse">
+                        <div class="glass-card p-3 small" style="background: var(--glass-bg-subtle); border-radius: var(--radius-md);">
+                            <div class="mb-2">
+                                <span class="badge status-badge status-indigo me-1">Admin</span>
+                                <code>admin@ums.edu</code> / <code>Admin@123</code>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge status-badge status-teal me-1">Teacher</span>
+                                <code>dr.tariq@ums.edu</code> / <code>Teacher@123</code>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge status-badge status-green me-1">Student</span>
+                                <code>ali.raza@ums.edu</code> / <code>Student@123</code>
+                            </div>
+                            <div>
+                                <span class="badge status-badge status-amber me-1">Staff</span>
+                                <code>staff.kamran@ums.edu</code> / <code>Staff@123</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}User Profile & Security{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-4">
+    <div class="col-xl-8 col-lg-10">
+        <!-- Account Overview Card -->
+        <div class="glass-card glass-card-dense mb-4">
+            <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge-fill text-indigo fs-5"></i>
+                    <h2 class="fs-5 fw-bold mb-0 text-main">Account Profile</h2>
+                </div>
+                <span class="status-badge status-green py-1 px-3">
+                    <i class="bi bi-shield-check"></i> Verified Account
+                </span>
+            </div>
+
+            <div class="p-3 p-md-5">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-4 mb-4 pb-4 border-bottom border-light border-opacity-25">
+                    <div class="user-avatar-initials shadow flex-shrink-0" style="width: 72px; height: 72px; font-size: 1.8rem; border-radius: 20px;">
+                        {{ user.first_name[0] if user.first_name else 'U' }}{{ user.last_name[0] if user.last_name else '' }}
+                    </div>
+                    <div style="min-width: 0;">
+                        <h3 class="fs-4 fw-bold text-main mb-1">{{ user.full_name }}</h3>
+                        <p class="text-muted small mb-2" style="overflow-wrap: anywhere;">{{ user.email }}</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for r in user.roles %}
+                            <span class="status-badge status-indigo py-0 px-2">{{ r.role.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Contact Phone</span>
+                        <div class="fw-semibold text-main">{{ user.phone or 'Not Provided' }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Account Status</span>
+                        <div>{{ ui.status_badge('Active' if user.is_active else 'Inactive') }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Member Since</span>
+                        <div class="small text-main">{{ user.created_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.05em;">Last Updated</span>
+                        <div class="small text-muted">{{ user.updated_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security & Password Update Card -->
+        <div class="glass-card glass-card-dense">
+            <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill text-amber fs-5"></i>
+                <h2 class="fs-5 fw-bold mb-0 text-main">Update Security Password</h2>
+            </div>
+
+            <div class="p-3 p-md-5">
+                <form method="POST" novalidate id="profilePasswordForm">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label for="{{ form.current_password.id }}" class="form-label">
+                            {{ form.current_password.label.text }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        {{ form.current_password(class="form-control glass-input" + (" is-invalid" if form.current_password.errors else ""), id=form.current_password.id, placeholder="Enter current password") }}
+                        {% for error in form.current_password.errors %}
+                        <div class="invalid-feedback d-block">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.new_password.id }}" class="form-label">
+                                {{ form.new_password.label.text }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.new_password(class="form-control glass-input" + (" is-invalid" if form.new_password.errors else ""), id=form.new_password.id, placeholder="Enter new strong password") }}
+                            {% for error in form.new_password.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="{{ form.confirm_password.id }}" class="form-label">
+                                {{ form.confirm_password.label.text }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.confirm_password(class="form-control glass-input" + (" is-invalid" if form.confirm_password.errors else ""), id=form.confirm_password.id, placeholder="Re-enter new password") }}
+                            {% for error in form.confirm_password.errors %}
+                            <div class="invalid-feedback d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary px-4 shadow w-100 w-sm-auto" style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-key-fill me-1"></i> Update Security Credentials
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

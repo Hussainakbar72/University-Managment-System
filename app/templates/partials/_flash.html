@@ -1,0 +1,29 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="toast-container-custom" aria-live="polite" aria-atomic="true">
+      {% for category, message in messages %}
+        {% set cat = 'info' %}
+        {% set icon = 'bi-info-circle-fill text-primary' %}
+        {% if category in ['success'] %}
+          {% set cat = 'success' %}
+          {% set icon = 'bi-check-circle-fill text-success' %}
+        {% elif category in ['danger', 'error'] %}
+          {% set cat = 'danger' %}
+          {% set icon = 'bi-exclamation-triangle-fill text-danger' %}
+        {% elif category in ['warning'] %}
+          {% set cat = 'warning' %}
+          {% set icon = 'bi-exclamation-circle-fill text-warning' %}
+        {% endif %}
+        <div class="glass-toast toast-{{ cat }}" role="alert">
+          <i class="bi {{ icon }} fs-5 mt-n1"></i>
+          <div class="toast-message flex-grow-1">
+            {{ message }}
+          </div>
+          <button type="button" class="toast-close" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

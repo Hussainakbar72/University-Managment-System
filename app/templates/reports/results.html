@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Examination Results Report{% endblock %}
+
+{% block content %}
+<div class="glass-card glass-card-dense mb-4">
+    <!-- Header with Print / Export -->
+    <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-graph-up text-indigo fs-5"></i>
+                <h2 class="fs-5 fw-bold text-main mb-0">Examination Results & Grade Distribution</h2>
+            </div>
+            <small class="text-muted">Section Academic Score Sheets and Final Grade Audit</small>
+        </div>
+        <button class="btn btn-glass btn-sm" onclick="window.print()" aria-label="Print or Export Report" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-printer text-indigo me-1"></i> Print / Export
+        </button>
+    </div>
+
+    <div class="p-3 p-md-4">
+        <!-- Filter Bar -->
+        <form method="GET" class="row g-2 mb-4" role="search">
+            <div class="col-12 col-md-9">
+                <select name="section_id" class="form-select glass-input" aria-label="Select Course Section to View Grade Sheet" required style="min-height: 44px;">
+                    <option value="">-- Select Course Section to View Grade Sheet --</option>
+                    {% for sec in sections %}
+                    <option value="{{ sec.id }}" {% if selected_section == sec.id %}selected{% endif %}>
+                        Section {{ sec.section_name }} ({{ sec.course.code if sec.course else '' }} - {{ sec.course.title if sec.course else '' }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-primary btn-sm w-100" style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-funnel me-1"></i> Load Grade Sheet
+                </button>
+            </div>
+        </form>
+
+        {% if selected_section %}
+        <div class="glass-table-container">
+            <table class="glass-table glass-table-cards">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Reg Number</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Total Score (/100)</th>
+                        <th scope="col">Letter Grade</th>
+                        <th scope="col">Grade Points</th>
+                        <th scope="col">Finalized At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in grades %}
+                    <tr>
+                        <td data-label="#" class="text-muted">{{ loop.index }}</td>
+                        <td data-label="Reg Number"><code class="text-indigo fw-bold">{{ g.enrollment.student.registration_number if g.enrollment and g.enrollment.student else '-' }}</code></td>
+                        <td data-label="Student Name" class="fw-semibold text-main">{{ g.enrollment.student.user.full_name if g.enrollment and g.enrollment.student and g.enrollment.student.user else '-' }}</td>
+                        <td data-label="Total Score (/100)" class="fw-bold">{{ g.total_score }}</td>
+                        <td data-label="Letter Grade">
+                            {% if g.letter_grade in ['A', 'A-'] %}
+                                <span class="glass-badge glass-badge-emerald fw-bold fs-6">{{ g.letter_grade }}</span>
+                            {% elif g.letter_grade in ['B+', 'B', 'B-'] %}
+                                <span class="glass-badge glass-badge-indigo fw-bold fs-6">{{ g.letter_grade }}</span>
+                            {% elif g.letter_grade in ['C+', 'C', 'C-'] %}
+                                <span class="glass-badge glass-badge-amber fw-bold fs-6">{{ g.letter_grade }}</span>
+                            {% elif g.letter_grade == 'F' %}
+                                <span class="glass-badge glass-badge-rose fw-bold fs-6">{{ g.letter_grade }}</span>
+                            {% else %}
+                                <span class="glass-badge glass-badge-neutral fw-bold fs-6">{{ g.letter_grade }}</span>
+                            {% endif %}
+                        </td>
+                        <td data-label="Grade Points" class="fw-bold">{{ g.grade_points }}</td>
+                        <td data-label="Finalized At" class="small text-muted">{{ g.finalized_at.strftime('%Y-%m-%d %H:%M') if g.finalized_at else '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="py-4">
+                            {{ ui.empty_state(title="No Grades Submitted", message="No final grades have been submitted for this section yet.", icon="bi-award") }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="py-5 text-center">
+            {{ ui.empty_state(title="Select a Section", message="Please choose an active course section above to inspect examination grade distribution.", icon="bi-award") }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

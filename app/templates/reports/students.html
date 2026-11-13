@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Students Enrollment Report{% endblock %}
+
+{% block content %}
+<div class="glass-card glass-card-dense mb-4">
+    <!-- Header with Print / Export -->
+    <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-file-earmark-person-fill text-indigo fs-5"></i>
+                <h2 class="fs-5 fw-bold text-main mb-0">Student Enrollment Registry Report</h2>
+            </div>
+            <small class="text-muted">Total Filtered: {{ students|length }} Students</small>
+        </div>
+        <button class="btn btn-glass btn-sm" onclick="window.print()" aria-label="Print or Export Report" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-printer text-indigo me-1"></i> Print / Export
+        </button>
+    </div>
+
+    <div class="p-3 p-md-4">
+        <!-- Filter Bar -->
+        <form method="GET" class="row g-2 mb-4" role="search">
+            <div class="col-12 col-md-5">
+                <select name="program_id" class="form-select glass-input" aria-label="Filter by degree program" style="min-height: 44px;">
+                    <option value="">-- All Academic Programs --</option>
+                    {% for p in programs %}
+                    <option value="{{ p.id }}" {% if selected_program == p.id %}selected{% endif %}>{{ p.code }} - {{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-4">
+                <select name="status" class="form-select glass-input" aria-label="Filter by student status" style="min-height: 44px;">
+                    <option value="">-- All Statuses --</option>
+                    <option value="Active" {% if selected_status == 'Active' %}selected{% endif %}>Active</option>
+                    <option value="Suspended" {% if selected_status == 'Suspended' %}selected{% endif %}>Suspended</option>
+                    <option value="Graduated" {% if selected_status == 'Graduated' %}selected{% endif %}>Graduated</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-primary btn-sm w-100" style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-funnel me-1"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+
+        <!-- Report Table -->
+        <div class="glass-table-container">
+            <table class="glass-table glass-table-cards">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Reg Number</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Degree Program</th>
+                        <th scope="col">Semester</th>
+                        <th scope="col">CGPA</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+                        <td data-label="#" class="text-muted">{{ loop.index }}</td>
+                        <td data-label="Reg Number"><code class="text-indigo fw-bold">{{ s.registration_number }}</code></td>
+                        <td data-label="Student Name" class="fw-semibold text-main">{{ s.user.full_name if s.user else 'N/A' }}</td>
+                        <td data-label="Degree Program" class="small">{{ s.program.name if s.program else 'N/A' }}</td>
+                        <td data-label="Semester" class="small text-muted">Semester {{ s.current_semester }}</td>
+                        <td data-label="CGPA" class="fw-bold">{{ s.cgpa if s.cgpa else '-' }}</td>
+                        <td data-label="Status">{{ ui.status_badge(s.status) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="py-4">
+                            {{ ui.empty_state(title="No Students Found", message="No student records match the selected filter criteria.", icon="bi-person-x") }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

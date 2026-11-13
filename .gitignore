@@ -1,0 +1,16 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.bak
+backup/
+instance/
+.env
+.pytest_cache/
+test-results/
+playwright-report/
+scratch/
+docs/
+

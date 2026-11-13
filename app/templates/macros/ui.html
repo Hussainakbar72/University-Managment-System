@@ -1,0 +1,63 @@
+{# ==========================================================================
+   UI.HTML - Reusable Jinja Macros for Glassmorphism Components
+   ========================================================================== #}
+
+{# 1. KPI Metric Card #}
+{% macro kpi_card(title, value, icon, color='indigo', trend=None, prefix='', suffix='', accent=None) %}
+{% set card_color = accent or color %}
+<div class="glass-card kpi-card kpi-{{ card_color }} h-100">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="kpi-icon-wrap" style="background: var(--status-{{ card_color }}-bg, rgba(99, 102, 241, 0.15)); color: var(--color-{{ card_color }}, #6366F1);">
+            <i class="bi {{ icon }}"></i>
+        </div>
+        {% if trend %}
+        <span class="badge status-badge status-green">{{ trend }}</span>
+        {% endif %}
+    </div>
+    <div class="kpi-value">
+        {% if prefix %}<small class="fs-5 opacity-75 me-1">{{ prefix }}</small>{% endif %}{{ value }}{% if suffix %}<small class="fs-5 opacity-75 ms-1">{{ suffix }}</small>{% endif %}
+    </div>
+    <div class="kpi-label">{{ title }}</div>
+</div>
+{% endmacro %}
+
+{# 2. Dynamic Color-Coded Status Badge #}
+{% macro status_badge(status) %}
+    {% set s = (status | string | trim | lower) %}
+    {% if s in ['active', 'paid', 'completed', 'present', 'enrolled', 'approved', 'pass', 'published', 'available'] %}
+        <span class="status-badge status-green">{{ status }}</span>
+    {% elif s in ['pending', 'late', 'partial', 'in progress', 'processing', 'scheduled'] %}
+        <span class="status-badge status-amber">{{ status }}</span>
+    {% elif s in ['overdue', 'absent', 'failed', 'inactive', 'cancelled', 'rejected', 'unpaid', 'dropped'] %}
+        <span class="status-badge status-rose">{{ status }}</span>
+    {% elif s in ['returned', 'resolved', 'closed'] %}
+        <span class="status-badge status-teal">{{ status }}</span>
+    {% else %}
+        <span class="status-badge status-indigo">{{ status if status else 'None' }}</span>
+    {% endif %}
+{% endmacro %}
+
+{# 3. Boolean Pill #}
+{% macro boolean_pill(val) %}
+    {% if val %}
+        <span class="pill-bool-true"><i class="bi bi-check-circle-fill"></i> Yes</span>
+    {% else %}
+        <span class="pill-bool-false"><i class="bi bi-x-circle-fill"></i> No</span>
+    {% endif %}
+{% endmacro %}
+
+{# 4. Friendly Empty State #}
+{% macro empty_state(title='No Records Found', message='There are no items to display in this list yet.', action_url=None, action_label=None, icon='bi-folder2-open') %}
+<div class="glass-empty-state">
+    <div class="empty-state-icon">
+        <i class="bi {{ icon }}"></i>
+    </div>
+    <h5 class="fw-bold mb-2">{{ title }}</h5>
+    <p class="text-muted small mb-4 mx-auto" style="max-width: 420px;">{{ message }}</p>
+    {% if action_url and action_label %}
+    <a href="{{ action_url }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i> {{ action_label }}
+    </a>
+    {% endif %}
+</div>
+{% endmacro %}

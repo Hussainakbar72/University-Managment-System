@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Fee Collection Report{% endblock %}
+
+{% block content %}
+<div class="glass-card glass-card-dense mb-4">
+    <!-- Header with Print / Export -->
+    <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-cash-coin text-emerald fs-5"></i>
+                <h2 class="fs-5 fw-bold text-main mb-0">Fee Collection & Outstanding Balances</h2>
+            </div>
+            <small class="text-muted">University Financial Audit, Collections and Arrears</small>
+        </div>
+        <button class="btn btn-glass btn-sm" onclick="window.print()" aria-label="Print or Export Report" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-printer text-indigo me-1"></i> Print / Export
+        </button>
+    </div>
+
+    <div class="p-3 p-md-4">
+        <!-- Filter Bar -->
+        <form method="GET" class="row g-2 mb-4" role="search">
+            <div class="col-12 col-md-9">
+                <select name="semester_id" class="form-select glass-input" aria-label="Filter by academic semester" style="min-height: 44px;">
+                    <option value="">-- All Academic Semesters --</option>
+                    {% for sem in semesters %}
+                    <option value="{{ sem.id }}" {% if selected_semester == sem.id %}selected{% endif %}>{{ sem.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-primary btn-sm w-100" style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-funnel me-1"></i> Filter Financials
+                </button>
+            </div>
+        </form>
+
+        <!-- KPI Summary Cards (All in PKR with Thousands Separators) -->
+        <div class="kpi-grid mb-4">
+            {{ ui.kpi_card(
+                title="Total Invoiced",
+                value="{:,.2f}".format(total_billed or 0),
+                prefix="PKR ",
+                icon="bi-receipt",
+                accent="indigo",
+                trend="Total billings issued"
+            ) }}
+            {{ ui.kpi_card(
+                title="Total Collected",
+                value="{:,.2f}".format(total_collected or 0),
+                prefix="PKR ",
+                icon="bi-check2-circle",
+                accent="emerald",
+                trend="Cleared collections"
+            ) }}
+            {{ ui.kpi_card(
+                title="Outstanding Dues",
+                value="{:,.2f}".format(total_pending or 0),
+                prefix="PKR ",
+                icon="bi-hourglass-split",
+                accent="rose",
+                trend="Pending receivables"
+            ) }}
+        </div>
+
+        <div class="glass-table-container">
+            <table class="glass-table glass-table-cards">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Invoice #</th>
+                        <th scope="col">Student Reg #</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Billed (PKR)</th>
+                        <th scope="col">Paid (PKR)</th>
+                        <th scope="col">Balance (PKR)</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inv in invoices %}
+                    <tr>
+                        <td data-label="#" class="text-muted">{{ loop.index }}</td>
+                        <td data-label="Invoice #"><code class="text-indigo fw-bold">{{ inv.invoice_number }}</code></td>
+                        <td data-label="Student Reg #"><code class="text-muted">{{ inv.student.registration_number if inv.student else '-' }}</code></td>
+                        <td data-label="Student Name" class="fw-semibold text-main">{{ inv.student.user.full_name if inv.student and inv.student.user else '-' }}</td>
+                        <td data-label="Billed (PKR)">PKR {{ "{:,.2f}".format(inv.total_amount or 0) }}</td>
+                        <td data-label="Paid (PKR)" class="text-success fw-semibold">PKR {{ "{:,.2f}".format(inv.paid_amount or 0) }}</td>
+                        <td data-label="Balance (PKR)" class="{% if inv.balance > 0 %}text-danger{% else %}text-muted{% endif %} fw-bold">PKR {{ "{:,.2f}".format(inv.balance or 0) }}</td>
+                        <td data-label="Due Date" class="small">{{ inv.due_date.strftime('%Y-%m-%d') if inv.due_date else '-' }}</td>
+                        <td data-label="Status">{{ ui.status_badge(inv.status) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="py-4">
+                            {{ ui.empty_state(title="No Financial Records", message="No invoices match the selected semester filter.", icon="bi-receipt-cutoff") }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

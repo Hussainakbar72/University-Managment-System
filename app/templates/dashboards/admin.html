@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Administrator Dashboard{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+    <div>
+        <h2 class="fs-4 fw-bold text-main mb-1">Administrative Overview</h2>
+        <p class="text-muted small mb-0">Real-time university operations, student enrollment, and financial metrics.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('reports.fees_report') }}" class="btn btn-glass btn-sm" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-graph-up text-indigo me-1"></i> Financial Reports
+        </a>
+        <a href="{{ url_for('services_mgmt.create_announcement') }}" class="btn btn-primary btn-sm" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-megaphone me-1"></i> Broadcast Notice
+        </a>
+    </div>
+</div>
+
+<!-- 4 Modern Glass KPI Cards (Using PKR Currency & Thousands Separator) -->
+<div class="kpi-grid mb-4">
+    {{ ui.kpi_card(
+        title="Total Students",
+        value="{:,}".format(total_students or 0),
+        icon="bi-people-fill",
+        color="indigo",
+        trend="Active Campus"
+    ) }}
+    {{ ui.kpi_card(
+        title="Faculty Instructors",
+        value="{:,}".format(total_instructors or 0),
+        icon="bi-person-video3",
+        color="teal",
+        trend="Department Staff"
+    ) }}
+    {{ ui.kpi_card(
+        title="Collected Revenue",
+        value="{:,.2f}".format(total_revenue or 0),
+        icon="bi-cash-stack",
+        color="emerald",
+        prefix="PKR ",
+        trend="Verified Paid"
+    ) }}
+    {{ ui.kpi_card(
+        title="Pending Dues",
+        value="{:,.2f}".format(pending_fees or 0),
+        icon="bi-hourglass-split",
+        color="rose",
+        prefix="PKR ",
+        trend="Outstanding"
+    ) }}
+</div>
+
+<!-- Main Dashboard Grid -->
+<div class="row g-4">
+    <!-- Left Column: System Audit Trail -->
+    <div class="col-lg-8">
+        <div class="glass-card glass-card-dense h-100">
+            <div class="p-3 px-md-4 border-bottom border-light border-opacity-25 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-activity text-indigo fs-5"></i>
+                    <h3 class="fs-6 fw-bold mb-0 text-main">System Audit Trail</h3>
+                </div>
+                <a href="{{ url_for('users_mgmt.list_audit_logs') }}" class="btn btn-glass btn-sm py-1 px-3" style="min-height: 36px; display: inline-flex; align-items: center;">
+                    View All Logs
+                </a>
+            </div>
+            <div class="glass-table-container">
+                <table class="glass-table glass-table-cards">
+                    <thead>
+                        <tr>
+                            <th scope="col">Action</th>
+                            <th scope="col">Target Model</th>
+                            <th scope="col">Record ID</th>
+                            <th scope="col">Timestamp</th>
+                            <th scope="col">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in recent_logs %}
+                        <tr>
+                            <td data-label="Action">
+                                {{ ui.status_badge(log.action) }}
+                            </td>
+                            <td data-label="Target Model">
+                                <code class="text-indigo fw-semibold">{{ log.table_name }}</code>
+                            </td>
+                            <td data-label="Record ID" class="fw-semibold">#{{ log.record_id }}</td>
+                            <td data-label="Timestamp" class="small text-muted">{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td data-label="Details" class="small text-muted">{{ log.details or '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="py-4">
+                                {{ ui.empty_state(title="No Audit Records", message="No recent system actions have been logged yet.") }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Campus Notices Panel -->
+    <div class="col-lg-4">
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-light border-opacity-25">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-megaphone-fill text-amber fs-5"></i>
+                    <h3 class="fs-6 fw-bold mb-0 text-main">Campus Notices</h3>
+                </div>
+                <span class="status-badge status-indigo py-0 px-2">Live</span>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                {% for ann in announcements %}
+                <div class="glass-card p-3" style="background: var(--glass-bg-subtle);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        {{ ui.status_badge(ann.target_audience) }}
+                        <small class="text-muted" style="font-size: 0.72rem;">{{ ann.created_at.strftime('%b %d, %Y') }}</small>
+                    </div>
+                    <h4 class="fs-6 fw-bold text-main mb-1">{{ ann.title }}</h4>
+                    <p class="small text-muted mb-0" style="font-size: 0.82rem; line-height: 1.4;">{{ ann.content }}</p>
+                </div>
+                {% else %}
+                <div class="py-3">
+                    {{ ui.empty_state(title="No Notices", message="No active announcements published.", icon="bi-megaphone") }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

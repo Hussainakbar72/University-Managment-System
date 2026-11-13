@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Faculty Portal{% endblock %}
+
+{% block content %}
+<!-- Faculty Header -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+    <div>
+        <h2 class="fs-4 fw-bold text-main mb-1">Faculty Academic Dashboard</h2>
+        <p class="text-muted small mb-0">
+            Welcome back, <strong>{{ instructor.designation if instructor and instructor.designation else 'Instructor' }} {{ current_user.full_name }}</strong>
+            {% if instructor and instructor.employee_id %}
+            &bull; Employee ID: <code class="text-indigo">{{ instructor.employee_id }}</code>
+            {% endif %}
+            {% if instructor and instructor.department %}
+            &bull; {{ instructor.department.name }}
+            {% endif %}
+        </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('enrollment_mgmt.create_attendance') }}" class="btn btn-glass btn-sm" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-calendar-check text-emerald me-1"></i> Mark Attendance
+        </a>
+        <a href="{{ url_for('exams_mgmt.create_assessment') }}" class="btn btn-primary btn-sm" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-plus-lg me-1"></i> New Assessment
+        </a>
+    </div>
+</div>
+
+<!-- Teacher KPI Cards Grid -->
+<div class="kpi-grid mb-4">
+    {{ ui.kpi_card(
+        title="Allotted Course Sections",
+        value=assigned_sections|length,
+        icon="bi-collection-fill",
+        color="indigo",
+        trend="Active Term"
+    ) }}
+    {{ ui.kpi_card(
+        title="Total Students Taught",
+        value="{:,}".format(total_students_taught or 0),
+        icon="bi-people-fill",
+        color="emerald",
+        trend="Enrolled"
+    ) }}
+    {{ ui.kpi_card(
+        title="Weekly Class Slots",
+        value=today_schedules|length,
+        icon="bi-clock-history",
+        color="amber",
+        trend="Weekly Timetable"
+    ) }}
+</div>
+
+<!-- Main Content Grid -->
+<div class="row g-4">
+    <!-- Left Column: Assigned Course Sections -->
+    <div class="col-lg-7">
+        <div class="glass-card glass-card-dense h-100">
+            <div class="p-3 px-md-4 border-bottom border-light border-opacity-25 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-journal-bookmark-fill text-indigo fs-5"></i>
+                    <h3 class="fs-6 fw-bold mb-0 text-main">Assigned Course Sections</h3>
+                </div>
+                <span class="badge status-badge status-indigo py-0 px-2">{{ assigned_sections|length }} Sections</span>
+            </div>
+            <div class="glass-table-container">
+                <table class="glass-table glass-table-cards">
+                    <thead>
+                        <tr>
+                            <th scope="col">Section</th>
+                            <th scope="col">Course Code</th>
+                            <th scope="col">Course Title</th>
+                            <th scope="col">Semester</th>
+                            <th scope="col" class="text-end px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sec in assigned_sections %}
+                        <tr>
+                            <td data-label="Section">
+                                <span class="status-badge status-indigo py-1 px-2">Section {{ sec.section_name }}</span>
+                            </td>
+                            <td data-label="Course Code">
+                                <code class="text-indigo fw-bold">{{ sec.course.code if sec.course else '-' }}</code>
+                            </td>
+                            <td data-label="Course Title" class="fw-semibold text-main">{{ sec.course.title if sec.course else '-' }}</td>
+                            <td data-label="Semester" class="small text-muted">{{ sec.semester.name if sec.semester else '-' }}</td>
+                            <td data-label="Actions" class="text-end px-4">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('enrollment_mgmt.create_attendance') }}" class="btn btn-glass btn-sm p-1 px-2 text-emerald" title="Log Attendance" style="min-height: 36px; min-width: 36px; display: inline-flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-calendar-check-fill"></i>
+                                    </a>
+                                    <a href="{{ url_for('exams_mgmt.create_assessment') }}" class="btn btn-glass btn-sm p-1 px-2 text-indigo" title="Add Assessment" style="min-height: 36px; min-width: 36px; display: inline-flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-plus-circle-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="py-4">
+                                {{ ui.empty_state(title="No Sections Assigned", message="You do not have any teaching sections allotted in the current term.") }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Weekly Teaching Timetable (Fix #9 Detailed Schedule Cards) -->
+    <div class="col-lg-5">
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-light border-opacity-25">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar3-week text-amber fs-5"></i>
+                    <h3 class="fs-6 fw-bold mb-0 text-main">Weekly Schedule</h3>
+                </div>
+                <span class="status-badge status-amber py-0 px-2">{{ today_schedules|length }} Slots</span>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                {% for sch in today_schedules %}
+                <div class="glass-card p-3" style="background: var(--glass-bg-subtle);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="status-badge status-teal py-0 px-2 fw-bold">{{ sch.day_of_week }}</span>
+                        <span class="badge status-badge status-indigo py-0 px-2">
+                            {{ sch.start_time.strftime('%H:%M') }} - {{ sch.end_time.strftime('%H:%M') }}
+                        </span>
+                    </div>
+                    <div class="fw-bold text-main small mb-1">
+                        {{ sch.section.course.title if (sch.section and sch.section.course) else 'Academic Course' }}
+                        <span class="text-muted fw-normal">(Sec {{ sch.section.section_name if sch.section else '' }})</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-muted small" style="font-size: 0.78rem;">
+                        <i class="bi bi-geo-alt-fill text-rose"></i>
+                        <span>{{ sch.classroom.building_name if sch.classroom else 'Main Campus' }} &bull; Room {{ sch.classroom.room_number if sch.classroom else 'TBA' }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="py-3">
+                    {{ ui.empty_state(title="No Schedule Slots", message="No active weekly class timetable found for your assigned sections.", icon="bi-clock") }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

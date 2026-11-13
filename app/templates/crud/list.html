@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+{# Permission checks for Issue #4: Only show action buttons to users who can actually perform them #}
+{% set is_admin = current_user.has_role('ADMIN') %}
+{% set is_teacher = current_user.has_role('TEACHER') %}
+{% set can_create = is_admin or (is_teacher and create_url and ('assessment' in create_url or 'attendance' in create_url or 'grade' in create_url)) %}
+{% set can_modify = is_admin or (is_teacher and edit_endpoint and ('assessment' in edit_endpoint or 'attendance' in edit_endpoint or 'grade' in edit_endpoint)) %}
+
+<div class="glass-card glass-card-dense mb-4">
+    <!-- Header with Search & Add Controls -->
+    <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="fs-5 fw-bold text-main mb-0">{{ title }}</h2>
+                <span class="badge status-badge status-indigo py-0 px-2">{{ items.total }} Records</span>
+            </div>
+            <small class="text-muted">Viewing page {{ items.page }} of {{ items.pages if items.pages > 0 else 1 }}</small>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <!-- Search Input with Clear Button -->
+            <form method="GET" class="d-flex search-wrapper" role="search">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="search" class="form-control glass-input" placeholder="Search..." value="{{ request.args.get('search', '') }}" aria-label="Search records">
+                <button type="button" class="btn-clear-search" aria-label="Clear search query">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+                {% if request.args.get('page') and request.args.get('page') != '1' %}
+                <input type="hidden" name="page" value="1">
+                {% endif %}
+            </form>
+
+            <!-- Add Button (Visible only to authorized roles) -->
+            {% if create_url and can_create %}
+            <a href="{{ create_url }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg"></i> Add New
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="glass-table-container">
+        <table class="glass-table glass-table-cards">
+            <thead>
+                <tr>
+                    {% for col_label, col_attr in columns %}
+                    <th scope="col">{{ col_label }}</th>
+                    {% endfor %}
+                    {% if can_modify %}
+                    <th scope="col" class="text-end px-4">Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items.items %}
+                <tr>
+                    {% for col_label, col_attr in columns %}
+                    <td data-label="{{ col_label }}">
+                        {% set val = item[col_attr] if col_attr in item.__dict__ else item.__getattribute__(col_attr) %}
+                        {% if val is sameas true %}
+                            {{ ui.boolean_pill(true) }}
+                        {% elif val is sameas false %}
+                            {{ ui.boolean_pill(false) }}
+                        {% elif val is none %}
+                            <span class="value-none">None</span>
+                        {% elif col_attr in ['status', 'is_published', 'action'] or 'status' in col_attr %}
+                            {{ ui.status_badge(val) }}
+                        {% elif col_attr in ['amount', 'total_amount', 'paid_amount', 'fine_amount', 'balance'] %}
+                            <span class="fw-semibold">PKR {{ "{:,.2f}".format(val) if val is number else val }}</span>
+                        {% else %}
+                            <span>{{ val }}</span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+
+                    {% if can_modify %}
+                    <td class="text-end px-4" data-label="Actions">
+                        <div class="btn-group btn-group-sm">
+                            {% if edit_endpoint %}
+                            <a href="{{ url_for(edit_endpoint, id=item.id) }}" class="btn btn-glass btn-sm p-1 px-2 text-indigo" title="Edit Record #{{ item.id }}">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            {% endif %}
+                            {% if delete_endpoint %}
+                            <button type="button" class="btn btn-glass btn-sm p-1 px-2 text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}" title="Delete Record #{{ item.id }}">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{{ columns|length + (1 if can_modify else 0) }}" class="p-0 border-0">
+                        {{ ui.empty_state(
+                            title="No " + title + " Found",
+                            message="No records match your search criteria or the database is currently empty.",
+                            action_url=create_url if (create_url and can_create) else None,
+                            action_label="Add New " + title
+                        ) }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Glass Pagination Footer -->
+    {% if items.pages > 1 %}
+    <div class="p-3 border-top border-light border-opacity-25 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+        <small class="text-muted">Showing {{ items.items|length }} of {{ items.total }} total entries</small>
+        <nav aria-label="List pagination">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item page-prev {% if not items.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for(request.endpoint, page=items.prev_num, search=request.args.get('search', '')) }}" aria-label="Previous Page">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                {% for page_num in items.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == items.page %}active page-active-indicator{% endif %}">
+                            <a class="page-link" href="{{ url_for(request.endpoint, page=page_num, search=request.args.get('search', '')) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item page-next {% if not items.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for(request.endpoint, page=items.next_num, search=request.args.get('search', '')) }}" aria-label="Next Page">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Root-level Delete Confirmation Modals (Prevents glass backdrop stacking context traps) -->
+{% if can_modify and delete_endpoint %}
+    {% for item in items.items %}
+    <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered text-start">
+            <div class="modal-content glass-card shadow-lg">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="status-badge status-rose py-1 px-2">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                        <h5 class="modal-title fs-6 fw-bold mb-0 text-main" id="deleteModalLabel{{ item.id }}">
+                            Confirm Safe Deletion
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p class="mb-2 text-main">
+                        Are you sure you want to permanently delete this record?
+                    </p>
+                    <div class="p-3 glass-card mb-2" style="background: var(--glass-bg-subtle);">
+                        <span class="text-muted small d-block">Target Record:</span>
+                        <span class="fw-bold text-main fs-6">ID #{{ item.id }}</span>
+                    </div>
+                    <small class="text-muted">
+                        Foreign-key integrity checks will prevent deletion if related records exist.
+                    </small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-glass btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{{ url_for(delete_endpoint, id=item.id) }}" method="POST" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash-fill me-1"></i> Yes, Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

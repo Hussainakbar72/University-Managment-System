@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Staff Portal{% endblock %}
+
+{% block content %}
+<!-- Staff Dashboard Header -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+    <div>
+        <h2 class="fs-4 fw-bold text-main mb-1">Campus Services & Operations</h2>
+        <p class="text-muted small mb-0">
+            Welcome, <strong>{{ staff.designation if staff and staff.designation else 'Staff Officer' }} {{ current_user.full_name }}</strong>
+            {% if staff and staff.employee_id %}
+            &bull; ID: <code class="text-indigo">{{ staff.employee_id }}</code>
+            {% endif %}
+            {% if staff and staff.department %}
+            &bull; {{ staff.department.name }}
+            {% endif %}
+        </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('services_mgmt.create_announcement') }}" class="btn btn-primary btn-sm" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-megaphone me-1"></i> Post Notice
+        </a>
+    </div>
+</div>
+
+<!-- 4 Modern Glass KPI Cards for Campus Services Operations -->
+<div class="kpi-grid mb-4">
+    {{ ui.kpi_card(
+        title="Library Catalog",
+        value="{:,}".format(total_books or 0),
+        icon="bi-book-half",
+        color="indigo",
+        trend="Available Titles"
+    ) }}
+    {{ ui.kpi_card(
+        title="Active Book Loans",
+        value="{:,}".format(active_loans or 0),
+        icon="bi-arrow-left-right",
+        color="emerald",
+        trend="Checked Out"
+    ) }}
+    {{ ui.kpi_card(
+        title="Hostel Rooms",
+        value="{:,}".format(total_hostel_rooms or 0),
+        icon="bi-building-check",
+        color="amber",
+        trend="Campus Residence"
+    ) }}
+    {{ ui.kpi_card(
+        title="Transit Bus Routes",
+        value="{:,}".format(total_routes or 0),
+        icon="bi-bus-front",
+        color="teal",
+        trend="Active Routes"
+    ) }}
+</div>
+
+<!-- Operational Quick Action Cards & Notices -->
+<div class="row g-4">
+    <!-- Left Column: Service Modules Quick Navigation -->
+    <div class="col-lg-7">
+        <div class="glass-card glass-card-dense p-4 h-100">
+            <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom border-light border-opacity-25">
+                <i class="bi bi-grid-3x3-gap-fill text-indigo fs-5"></i>
+                <h3 class="fs-6 fw-bold mb-0 text-main">Service Operations Modules</h3>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <a href="{{ url_for('services_mgmt.list_books') }}" class="glass-card glass-card-hover p-3 text-decoration-none d-block">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="kpi-icon-wrap mb-0" style="background: var(--status-indigo-bg); color: var(--color-indigo);">
+                                <i class="bi bi-book"></i>
+                            </div>
+                            <div>
+                                <h4 class="fs-6 fw-bold text-main mb-1">Library Records</h4>
+                                <small class="text-muted">Books, copies, loans & fines</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6">
+                    <a href="{{ url_for('services_mgmt.list_hostel_buildings') }}" class="glass-card glass-card-hover p-3 text-decoration-none d-block">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="kpi-icon-wrap mb-0" style="background: var(--status-amber-bg); color: var(--color-amber);">
+                                <i class="bi bi-houses"></i>
+                            </div>
+                            <div>
+                                <h4 class="fs-6 fw-bold text-main mb-1">Hostel Management</h4>
+                                <small class="text-muted">Buildings, rooms & allocations</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6">
+                    <a href="{{ url_for('services_mgmt.list_routes') }}" class="glass-card glass-card-hover p-3 text-decoration-none d-block">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="kpi-icon-wrap mb-0" style="background: var(--status-teal-bg); color: var(--color-teal);">
+                                <i class="bi bi-map"></i>
+                            </div>
+                            <div>
+                                <h4 class="fs-6 fw-bold text-main mb-1">Campus Transit</h4>
+                                <small class="text-muted">Bus routes, vehicles & passes</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6">
+                    <a href="{{ url_for('services_mgmt.list_announcements') }}" class="glass-card glass-card-hover p-3 text-decoration-none d-block">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="kpi-icon-wrap mb-0" style="background: var(--status-rose-bg); color: var(--color-rose);">
+                                <i class="bi bi-megaphone"></i>
+                            </div>
+                            <div>
+                                <h4 class="fs-6 fw-bold text-main mb-1">Announcements</h4>
+                                <small class="text-muted">Broadcast university notices</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Announcements Panel -->
+    <div class="col-lg-5">
+        <div class="glass-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-light border-opacity-25">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-megaphone-fill text-amber fs-5"></i>
+                    <h3 class="fs-6 fw-bold mb-0 text-main">Campus Bulletins</h3>
+                </div>
+                <span class="status-badge status-indigo py-0 px-2">Published</span>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                {% for ann in announcements %}
+                <div class="glass-card p-3" style="background: var(--glass-bg-subtle);">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        {{ ui.status_badge(ann.target_audience) }}
+                        <small class="text-muted" style="font-size: 0.72rem;">{{ ann.created_at.strftime('%b %d, %Y') }}</small>
+                    </div>
+                    <h4 class="fs-6 fw-bold text-main mb-1">{{ ann.title }}</h4>
+                    <p class="small text-muted mb-0" style="font-size: 0.82rem; line-height: 1.4;">{{ ann.content }}</p>
+                </div>
+                {% else %}
+                <div class="py-3">
+                    {{ ui.empty_state(title="No Notices", message="No active announcements at this time.", icon="bi-megaphone") }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

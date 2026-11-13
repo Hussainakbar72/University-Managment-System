@@ -1,0 +1,249 @@
+{# ==========================================================================
+   _SIDEBAR.HTML - Role-Based Floating Glass Sidebar & Offcanvas Drawer
+   ========================================================================== #}
+
+<div class="sidebar-brand-wrapper">
+    <div class="sidebar-brand-icon">
+        <i class="bi bi-mortarboard-fill"></i>
+    </div>
+    <div class="flex-grow-1">
+        <span class="fs-6 fw-bold text-main d-block lh-1">UMS Portal</span>
+        <small class="text-muted" style="font-size: 0.72rem;">Academic Intelligence</small>
+    </div>
+</div>
+
+<div class="sidebar-scrollable">
+    {% if current_user.has_role('STUDENT') %}
+    <!-- ================= STUDENT PORTAL ================= -->
+    <div class="nav-group-header">Student Portal</div>
+    <a href="{{ url_for('dashboard.index') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'dashboard.index' else '' }}">
+        <i class="bi bi-grid-fill text-indigo"></i> My Dashboard
+    </a>
+    <a href="{{ url_for('enrollment_mgmt.list_enrollments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_enrollments' else '' }}">
+        <i class="bi bi-card-checklist text-teal"></i> Enrollments
+    </a>
+    <a href="{{ url_for('enrollment_mgmt.list_attendance') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_attendance' else '' }}">
+        <i class="bi bi-calendar-check text-emerald"></i> Class Attendance
+    </a>
+    <a href="{{ url_for('enrollment_mgmt.list_schedules') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_schedules' else '' }}">
+        <i class="bi bi-clock text-amber"></i> Weekly Time Table
+    </a>
+    <a href="{{ url_for('exams_mgmt.list_grades') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_grades' else '' }}">
+        <i class="bi bi-award text-rose"></i> Exam & Result
+    </a>
+    <a href="{{ url_for('finance_mgmt.list_invoices') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_invoices' else '' }}">
+        <i class="bi bi-receipt text-indigo"></i> Fees Invoices
+    </a>
+    <a href="{{ url_for('services_mgmt.list_loans') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_loans' else '' }}">
+        <i class="bi bi-book-half text-teal"></i> Library Loans
+    </a>
+    <a href="{{ url_for('services_mgmt.list_transport_assignments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_transport_assignments' else '' }}">
+        <i class="bi bi-bus-front text-emerald"></i> Transport
+    </a>
+    <a href="{{ url_for('services_mgmt.list_announcements') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_announcements' else '' }}">
+        <i class="bi bi-megaphone text-amber"></i> Announcements
+    </a>
+
+    {% elif current_user.has_role('TEACHER') %}
+    <!-- ================= TEACHER PORTAL ================= -->
+    <div class="nav-group-header">Faculty Portal</div>
+    <a href="{{ url_for('dashboard.index') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'dashboard.index' else '' }}">
+        <i class="bi bi-grid-fill text-indigo"></i> Teacher Dashboard
+    </a>
+    <a href="{{ url_for('enrollment_mgmt.list_sections') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_sections' else '' }}">
+        <i class="bi bi-collection text-teal"></i> Allotted Sections
+    </a>
+    <a href="{{ url_for('enrollment_mgmt.list_attendance') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_attendance' else '' }}">
+        <i class="bi bi-calendar-check text-emerald"></i> Mark Attendance
+    </a>
+    <a href="{{ url_for('exams_mgmt.list_assessments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_assessments' else '' }}">
+        <i class="bi bi-pencil-square text-amber"></i> Assignments & Quizzes
+    </a>
+    <a href="{{ url_for('exams_mgmt.list_assessment_results') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_assessment_results' else '' }}">
+        <i class="bi bi-check2-circle text-indigo"></i> Enter Assessment Marks
+    </a>
+    <a href="{{ url_for('exams_mgmt.list_exams') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_exams' else '' }}">
+        <i class="bi bi-clipboard2-check text-rose"></i> Exam Schedule
+    </a>
+    <a href="{{ url_for('exams_mgmt.list_grades') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_grades' else '' }}">
+        <i class="bi bi-award text-emerald"></i> Enter Final Grades
+    </a>
+    <a href="{{ url_for('enrollment_mgmt.list_schedules') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_schedules' else '' }}">
+        <i class="bi bi-clock text-teal"></i> Teacher Schedule
+    </a>
+    <a href="{{ url_for('services_mgmt.list_announcements') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_announcements' else '' }}">
+        <i class="bi bi-megaphone text-amber"></i> Announcements
+    </a>
+
+    {% elif current_user.has_role('STAFF') %}
+    <!-- ================= STAFF PORTAL ================= -->
+    <div class="nav-group-header">Staff Portal</div>
+    <a href="{{ url_for('dashboard.index') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'dashboard.index' else '' }}">
+        <i class="bi bi-grid-fill text-indigo"></i> Staff Dashboard
+    </a>
+    <a href="{{ url_for('services_mgmt.list_books') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_books' else '' }}">
+        <i class="bi bi-book-half text-teal"></i> Library Books
+    </a>
+    <a href="{{ url_for('services_mgmt.list_copies') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_copies' else '' }}">
+        <i class="bi bi-upc-scan text-indigo"></i> Book Copies
+    </a>
+    <a href="{{ url_for('services_mgmt.list_loans') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_loans' else '' }}">
+        <i class="bi bi-arrow-left-right text-emerald"></i> Library Loans
+    </a>
+    <a href="{{ url_for('services_mgmt.list_fines') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_fines' else '' }}">
+        <i class="bi bi-cash-stack text-rose"></i> Library Fines
+    </a>
+    <a href="{{ url_for('services_mgmt.list_hostel_buildings') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_hostel_buildings' else '' }}">
+        <i class="bi bi-building-check text-indigo"></i> Hostel Buildings
+    </a>
+    <a href="{{ url_for('services_mgmt.list_hostel_rooms') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_hostel_rooms' else '' }}">
+        <i class="bi bi-hospital text-teal"></i> Hostel Rooms
+    </a>
+    <a href="{{ url_for('services_mgmt.list_hostel_allocations') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_hostel_allocations' else '' }}">
+        <i class="bi bi-person-lines-fill text-amber"></i> Hostel Allocations
+    </a>
+    <a href="{{ url_for('services_mgmt.list_routes') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_routes' else '' }}">
+        <i class="bi bi-map text-emerald"></i> Bus Routes
+    </a>
+    <a href="{{ url_for('services_mgmt.list_vehicles') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_vehicles' else '' }}">
+        <i class="bi bi-bus-front text-indigo"></i> Transport Vehicles
+    </a>
+    <a href="{{ url_for('services_mgmt.list_transport_assignments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_transport_assignments' else '' }}">
+        <i class="bi bi-ticket-perforated text-teal"></i> Transport Passes
+    </a>
+    <a href="{{ url_for('services_mgmt.list_announcements') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_announcements' else '' }}">
+        <i class="bi bi-megaphone text-amber"></i> Announcements
+    </a>
+
+    {% else %}
+    <!-- ================= ADMIN PORTAL ================= -->
+    <a href="{{ url_for('dashboard.index') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'dashboard.index' else '' }}">
+        <i class="bi bi-grid-fill text-indigo"></i> Dashboard
+    </a>
+
+    <!-- Live Search Filter for Navigation Links -->
+    <div class="px-1 py-2">
+        <div class="search-wrapper w-100">
+            <i class="bi bi-search search-icon" style="font-size: 0.8rem; left: 12px;"></i>
+            <input type="text" class="form-control glass-input sidebar-search-input py-1 px-3" placeholder="Filter links..." style="font-size: 0.82rem; min-height: 38px !important; padding-left: 2rem !important;" aria-label="Filter navigation links">
+        </div>
+    </div>
+
+    <!-- 1. Academic Hierarchy -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseAcademic" aria-expanded="true" aria-controls="collapseAcademic">
+        <span>Academic Hierarchy</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse show" id="collapseAcademic">
+        <a href="{{ url_for('academic.list_campuses') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_campuses' else '' }}"><i class="bi bi-geo-alt"></i> Campuses</a>
+        <a href="{{ url_for('academic.list_faculties') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_faculties' else '' }}"><i class="bi bi-diagram-3"></i> Faculties</a>
+        <a href="{{ url_for('academic.list_departments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_departments' else '' }}"><i class="bi bi-building"></i> Departments</a>
+        <a href="{{ url_for('academic.list_programs') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_programs' else '' }}"><i class="bi bi-journal-bookmark"></i> Programs</a>
+        <a href="{{ url_for('academic.list_years') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_years' else '' }}"><i class="bi bi-calendar3"></i> Academic Years</a>
+        <a href="{{ url_for('academic.list_semesters') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_semesters' else '' }}"><i class="bi bi-calendar-week"></i> Semesters</a>
+        <a href="{{ url_for('academic.list_courses') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_courses' else '' }}"><i class="bi bi-book"></i> Courses</a>
+        <a href="{{ url_for('academic.list_prerequisites') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'academic.list_prerequisites' else '' }}"><i class="bi bi-signpost-split"></i> Prerequisites</a>
+    </div>
+
+    <!-- 2. People & Registration -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapsePeople" aria-expanded="true" aria-controls="collapsePeople">
+        <span>People & Roles</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse show" id="collapsePeople">
+        <a href="{{ url_for('users_mgmt.list_users') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'users_mgmt.list_users' else '' }}"><i class="bi bi-people"></i> All Users</a>
+        <a href="{{ url_for('students_mgmt.list_students') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'students_mgmt.list_students' else '' }}"><i class="bi bi-person-badge"></i> Students</a>
+        <a href="{{ url_for('instructors_mgmt.list_instructors') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'instructors_mgmt.list_instructors' else '' }}"><i class="bi bi-person-video3"></i> Instructors</a>
+        <a href="{{ url_for('users_mgmt.list_staff') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'users_mgmt.list_staff' else '' }}"><i class="bi bi-person-workspace"></i> Staff</a>
+        <a href="{{ url_for('students_mgmt.list_guardians') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'students_mgmt.list_guardians' else '' }}"><i class="bi bi-person-heart"></i> Guardians</a>
+        <a href="{{ url_for('students_mgmt.list_student_guardians') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'students_mgmt.list_student_guardians' else '' }}"><i class="bi bi-link-45deg"></i> Guardian Links</a>
+    </div>
+
+    <!-- 3. Classes & Attendance -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseClasses" aria-expanded="true" aria-controls="collapseClasses">
+        <span>Classes & Teaching</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse show" id="collapseClasses">
+        <a href="{{ url_for('enrollment_mgmt.list_classrooms') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_classrooms' else '' }}"><i class="bi bi-door-open"></i> Classrooms</a>
+        <a href="{{ url_for('enrollment_mgmt.list_sections') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_sections' else '' }}"><i class="bi bi-collection"></i> Course Sections</a>
+        <a href="{{ url_for('enrollment_mgmt.list_schedules') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_schedules' else '' }}"><i class="bi bi-clock"></i> Class Schedules</a>
+        <a href="{{ url_for('enrollment_mgmt.list_enrollments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_enrollments' else '' }}"><i class="bi bi-card-checklist"></i> Enrollments</a>
+        <a href="{{ url_for('enrollment_mgmt.list_attendance') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'enrollment_mgmt.list_attendance' else '' }}"><i class="bi bi-calendar-check"></i> Attendance Logs</a>
+    </div>
+
+    <!-- 4. Exams & Results -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseExams" aria-expanded="true" aria-controls="collapseExams">
+        <span>Examinations</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse show" id="collapseExams">
+        <a href="{{ url_for('exams_mgmt.list_assessments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_assessments' else '' }}"><i class="bi bi-file-earmark-text"></i> Assessments</a>
+        <a href="{{ url_for('exams_mgmt.list_assessment_results') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_assessment_results' else '' }}"><i class="bi bi-check2-circle"></i> Assessment Marks</a>
+        <a href="{{ url_for('exams_mgmt.list_exams') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_exams' else '' }}"><i class="bi bi-clipboard2-check"></i> Exam Timetable</a>
+        <a href="{{ url_for('exams_mgmt.list_exam_rooms') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_exam_rooms' else '' }}"><i class="bi bi-houses"></i> Exam Rooms</a>
+        <a href="{{ url_for('exams_mgmt.list_exam_seating') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_exam_seating' else '' }}"><i class="bi bi-grid-3x3"></i> Seating Plan</a>
+        <a href="{{ url_for('exams_mgmt.list_grades') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_grades' else '' }}"><i class="bi bi-award"></i> Final Grades</a>
+        <a href="{{ url_for('exams_mgmt.list_transcripts') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'exams_mgmt.list_transcripts' else '' }}"><i class="bi bi-file-earmark-spreadsheet"></i> Transcripts</a>
+    </div>
+
+    <!-- 5. Finance & Fees -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseFinance" aria-expanded="true" aria-controls="collapseFinance">
+        <span>Finance & Fees</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse show" id="collapseFinance">
+        <a href="{{ url_for('finance_mgmt.list_fee_types') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_fee_types' else '' }}"><i class="bi bi-tags"></i> Fee Types</a>
+        <a href="{{ url_for('finance_mgmt.list_fee_structures') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_fee_structures' else '' }}"><i class="bi bi-calculator"></i> Fee Structures</a>
+        <a href="{{ url_for('finance_mgmt.list_invoices') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_invoices' else '' }}"><i class="bi bi-receipt"></i> Student Invoices</a>
+        <a href="{{ url_for('finance_mgmt.list_invoice_items') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_invoice_items' else '' }}"><i class="bi bi-list-nested"></i> Invoice Items</a>
+        <a href="{{ url_for('finance_mgmt.list_payments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_payments' else '' }}"><i class="bi bi-cash-stack"></i> Payments</a>
+        <a href="{{ url_for('finance_mgmt.list_scholarships') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_scholarships' else '' }}"><i class="bi bi-trophy"></i> Scholarships</a>
+        <a href="{{ url_for('finance_mgmt.list_awards') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'finance_mgmt.list_awards' else '' }}"><i class="bi bi-patch-check"></i> Scholarship Awards</a>
+    </div>
+
+    <!-- 6. Campus Services -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
+        <span>Campus Services</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse" id="collapseServices">
+        <a href="{{ url_for('services_mgmt.list_books') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_books' else '' }}"><i class="bi bi-book-half"></i> Library Books</a>
+        <a href="{{ url_for('services_mgmt.list_copies') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_copies' else '' }}"><i class="bi bi-upc-scan"></i> Book Copies</a>
+        <a href="{{ url_for('services_mgmt.list_loans') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_loans' else '' }}"><i class="bi bi-arrow-left-right"></i> Library Loans</a>
+        <a href="{{ url_for('services_mgmt.list_fines') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_fines' else '' }}"><i class="bi bi-currency-dollar"></i> Library Fines</a>
+        <a href="{{ url_for('services_mgmt.list_hostel_buildings') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_hostel_buildings' else '' }}"><i class="bi bi-building-check"></i> Hostel Buildings</a>
+        <a href="{{ url_for('services_mgmt.list_hostel_rooms') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_hostel_rooms' else '' }}"><i class="bi bi-hospital"></i> Hostel Rooms</a>
+        <a href="{{ url_for('services_mgmt.list_hostel_allocations') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_hostel_allocations' else '' }}"><i class="bi bi-person-lines-fill"></i> Hostel Allocations</a>
+        <a href="{{ url_for('services_mgmt.list_routes') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_routes' else '' }}"><i class="bi bi-map"></i> Bus Routes</a>
+        <a href="{{ url_for('services_mgmt.list_vehicles') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_vehicles' else '' }}"><i class="bi bi-bus-front"></i> Transport Vehicles</a>
+        <a href="{{ url_for('services_mgmt.list_transport_assignments') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_transport_assignments' else '' }}"><i class="bi bi-ticket-perforated"></i> Transport Passes</a>
+    </div>
+
+    <!-- 7. System Administration -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseSystem" aria-expanded="false" aria-controls="collapseSystem">
+        <span>System Admin</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse" id="collapseSystem">
+        <a href="{{ url_for('services_mgmt.list_announcements') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_announcements' else '' }}"><i class="bi bi-megaphone"></i> Announcements</a>
+        <a href="{{ url_for('services_mgmt.list_notifications') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'services_mgmt.list_notifications' else '' }}"><i class="bi bi-bell"></i> Notifications</a>
+        <a href="{{ url_for('users_mgmt.list_audit_logs') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'users_mgmt.list_audit_logs' else '' }}"><i class="bi bi-journal-text"></i> Audit Logs</a>
+        <a href="{{ url_for('users_mgmt.list_roles') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'users_mgmt.list_roles' else '' }}"><i class="bi bi-shield-lock"></i> Roles</a>
+        <a href="{{ url_for('users_mgmt.list_user_roles') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'users_mgmt.list_user_roles' else '' }}"><i class="bi bi-person-check"></i> Role Assignments</a>
+    </div>
+
+    <!-- 8. Reports & Analytics -->
+    <div class="nav-group-header" data-bs-toggle="collapse" data-bs-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
+        <span>Reports & Analytics</span>
+        <i class="bi bi-chevron-down chevron-icon"></i>
+    </div>
+    <div class="collapse nav-group-collapse" id="collapseReports">
+        <a href="{{ url_for('reports.student_list_report') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'reports.student_list_report' else '' }}"><i class="bi bi-file-earmark-person text-amber"></i> Students Report</a>
+        <a href="{{ url_for('reports.attendance_report') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'reports.attendance_report' else '' }}"><i class="bi bi-bar-chart-line text-emerald"></i> Attendance Report</a>
+        <a href="{{ url_for('reports.enrollment_report') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'reports.enrollment_report' else '' }}"><i class="bi bi-pie-chart text-indigo"></i> Enrollment Report</a>
+        <a href="{{ url_for('reports.results_report') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'reports.results_report' else '' }}"><i class="bi bi-graph-up text-teal"></i> Results Report</a>
+        <a href="{{ url_for('reports.fees_report') }}" class="sidebar-link {{ 'active-menu' if request.endpoint == 'reports.fees_report' else '' }}"><i class="bi bi-cash-coin text-rose"></i> Fee Report</a>
+    </div>
+    {% endif %}
+</div>

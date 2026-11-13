@@ -1,0 +1,160 @@
+/* ==========================================================================
+   TOKENS.CSS - Design Tokens & Single Source of Truth
+   University Management System - Glassmorphism UI
+   ========================================================================== */
+
+:root {
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Fluid Typography Scale */
+  --text-page-title: clamp(1.25rem, 1rem + 1.2vw, 1.85rem);
+  --text-section-title: clamp(1.1rem, 0.95rem + 0.8vw, 1.45rem);
+  --text-kpi-value: clamp(1.35rem, 1rem + 2cqi, 2.15rem);
+  --text-body-base: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-body-xs: 0.78rem;
+
+  /* Fluid Spacing & Padding */
+  --space-layout-x: clamp(0.75rem, 0.5rem + 1vw, 1.75rem);
+  --space-layout-y: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
+  --space-card-p: clamp(1rem, 0.75rem + 0.8vw, 1.5rem);
+
+  /* Touch Safety & Interactivity */
+  --touch-target-min: 44px;
+
+  /* Safe Area Inset Tokens (Notched & Dynamic Island Devices) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Mobile Blur Reduction */
+  --glass-blur-default: 16px;
+  --glass-blur-mobile: 8px;
+
+  /* Layout Max Width */
+  --layout-max-width: 1600px;
+  
+  /* Brand Colors - Luxury High-Tech Academic Palette */
+  --color-indigo: #2563EB;
+  --color-indigo-hover: #1D4ED8;
+  --color-violet: #7C3AED;
+  --color-teal: #06B6D4;
+  --color-rose: #F43F5E;
+  --color-amber: #F59E0B;
+  --color-emerald: #10B981;
+
+  /* Theme Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* Light Theme (Default) - Crisp Luminescent Atmosphere */
+  --bg-gradient: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 35%, #EDE9FE 70%, #E0F2FE 100%);
+  --bg-solid-fallback: #F1F5F9;
+  --orbs-opacity: 0.75;
+
+  /* Glass Surfaces (Light) */
+  --glass-bg: rgba(255, 255, 255, 0.70);
+  --glass-bg-dense: rgba(255, 255, 255, 0.88);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.45);
+  --glass-bg-hover: rgba(255, 255, 255, 0.92);
+  --glass-bg-active: rgba(37, 99, 235, 0.12);
+  
+  --glass-border: 1px solid rgba(255, 255, 255, 0.85);
+  --glass-border-subtle: 1px solid rgba(203, 213, 225, 0.55);
+  --glass-border-strong: 1px solid rgba(255, 255, 255, 0.98);
+  
+  --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  --glass-shadow-hover: 0 20px 40px -6px rgba(37, 99, 235, 0.22);
+  --glass-shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.05);
+
+  /* Typography Colors (Light) */
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --text-light: #64748B;
+  --text-inverse: #FFFFFF;
+
+  /* Input & Control Tokens (Light) */
+  --input-bg: rgba(255, 255, 255, 0.85);
+  --input-border: rgba(203, 213, 225, 0.85);
+  --input-focus-border: var(--color-indigo);
+  --input-focus-glow: 0 0 0 3px rgba(37, 99, 235, 0.22);
+
+  /* Badges & Status (Light) */
+  --status-green-bg: rgba(16, 185, 129, 0.14);
+  --status-green-text: #065F46;
+  --status-amber-bg: rgba(245, 158, 11, 0.14);
+  --status-amber-text: #92400E;
+  --status-rose-bg: rgba(244, 63, 94, 0.14);
+  --status-rose-text: #9F1239;
+  --status-indigo-bg: rgba(37, 99, 235, 0.14);
+  --status-indigo-text: #1E40AF;
+  --status-teal-bg: rgba(6, 182, 212, 0.14);
+  --status-teal-text: #0E7490;
+}
+
+/* Dark Theme Overrides - Deep Midnight Obsidian & Cosmic Glow */
+[data-bs-theme="dark"] {
+  --bg-gradient: linear-gradient(135deg, #060911 0%, #0B1120 45%, #08101E 100%);
+  --bg-solid-fallback: #060911;
+  --orbs-opacity: 0.55;
+
+  /* Glass Surfaces (Dark) */
+  --glass-bg: rgba(15, 23, 42, 0.65);
+  --glass-bg-dense: rgba(15, 23, 42, 0.85);
+  --glass-bg-subtle: rgba(15, 23, 42, 0.40);
+  --glass-bg-hover: rgba(30, 41, 59, 0.80);
+  --glass-bg-active: rgba(37, 99, 235, 0.28);
+
+  --glass-border: 1px solid rgba(255, 255, 255, 0.10);
+  --glass-border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+  --glass-border-strong: 1px solid rgba(56, 189, 248, 0.28);
+
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  --glass-shadow-hover: 0 20px 42px rgba(37, 99, 235, 0.35);
+  --glass-shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.40);
+
+  /* Typography Colors (Dark) */
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --text-light: #64748B;
+  --text-inverse: #060911;
+
+  /* Input & Control Tokens (Dark) */
+  --input-bg: rgba(15, 23, 42, 0.65);
+  --input-border: rgba(255, 255, 255, 0.14);
+  --input-focus-border: #38BDF8;
+  --input-focus-glow: 0 0 0 3px rgba(56, 189, 248, 0.28);
+
+  /* Badges & Status (Dark) */
+  --status-green-bg: rgba(16, 185, 129, 0.22);
+  --status-green-text: #6EE7B7;
+  --status-amber-bg: rgba(245, 158, 11, 0.22);
+  --status-amber-text: #FCD34D;
+  --status-rose-bg: rgba(244, 63, 94, 0.22);
+  --status-rose-text: #FDA4AF;
+  --status-indigo-bg: rgba(37, 99, 235, 0.25);
+  --status-indigo-text: #93C5FD;
+  --status-teal-bg: rgba(6, 182, 212, 0.22);
+  --status-teal-text: #67E8F9;
+}
+
+/* Color Utility Helpers */
+.text-indigo { color: var(--color-indigo) !important; }
+.text-violet { color: var(--color-violet) !important; }
+.text-teal { color: var(--color-teal) !important; }
+.text-emerald { color: var(--color-emerald) !important; }
+.text-amber { color: var(--color-amber) !important; }
+.text-rose { color: var(--color-rose) !important; }
+

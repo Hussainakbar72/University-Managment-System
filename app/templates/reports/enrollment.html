@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% import "macros/ui.html" as ui %}
+
+{% block title %}Course Enrollment Report{% endblock %}
+
+{% block content %}
+<div class="glass-card glass-card-dense mb-4">
+    <!-- Header with Print / Export -->
+    <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-pie-chart-fill text-indigo fs-5"></i>
+                <h2 class="fs-5 fw-bold text-main mb-0">Course Enrollment & Section Utilization</h2>
+            </div>
+            <small class="text-muted">Capacity vs Actual Enrollment Analysis per Semester</small>
+        </div>
+        <button class="btn btn-glass btn-sm" onclick="window.print()" aria-label="Print or Export Report" style="min-height: 40px; display: inline-flex; align-items: center;">
+            <i class="bi bi-printer text-indigo me-1"></i> Print / Export
+        </button>
+    </div>
+
+    <div class="p-3 p-md-4">
+        <!-- Filter Bar -->
+        <form method="GET" class="row g-2 mb-4" role="search">
+            <div class="col-12 col-md-9">
+                <select name="semester_id" class="form-select glass-input" aria-label="Select Semester" required style="min-height: 44px;">
+                    <option value="">-- Select Semester --</option>
+                    {% for sem in semesters %}
+                    <option value="{{ sem.id }}" {% if selected_semester == sem.id %}selected{% endif %}>{{ sem.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <button type="submit" class="btn btn-primary btn-sm w-100" style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-funnel me-1"></i> View Stats
+                </button>
+            </div>
+        </form>
+
+        {% if selected_semester %}
+        <div class="glass-table-container">
+            <table class="glass-table glass-table-cards">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Course Code</th>
+                        <th scope="col">Course Title</th>
+                        <th scope="col">Section</th>
+                        <th scope="col">Instructor</th>
+                        <th scope="col">Enrolled</th>
+                        <th scope="col">Capacity</th>
+                        <th scope="col" style="min-width: 150px;">Utilization Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in section_stats %}
+                    {% set util = (stat.enrolled_count / stat.max_capacity * 100)|round(1) if stat.max_capacity > 0 else 0 %}
+                    <tr>
+                        <td data-label="#" class="text-muted">{{ loop.index }}</td>
+                        <td data-label="Course Code"><code class="text-indigo fw-bold">{{ stat.course.code if stat.course else '-' }}</code></td>
+                        <td data-label="Course Title" class="fw-semibold text-main">{{ stat.course.title if stat.course else '-' }}</td>
+                        <td data-label="Section"><span class="glass-badge glass-badge-neutral">Section {{ stat.section_name }}</span></td>
+                        <td data-label="Instructor" class="small">{{ stat.instructor.user.full_name if stat.instructor and stat.instructor.user else 'TBD' }}</td>
+                        <td data-label="Enrolled"><span class="glass-badge glass-badge-indigo fw-bold">{{ stat.enrolled_count }}</span></td>
+                        <td data-label="Capacity" class="text-muted">{{ stat.max_capacity }}</td>
+                        <td data-label="Utilization Rate">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 8px; background: rgba(148, 163, 184, 0.2); border-radius: 999px;">
+                                    <div class="progress-bar {% if util > 90 %}bg-danger{% elif util > 60 %}bg-primary{% else %}bg-secondary{% endif %}" role="progressbar" style="width: {{ util }}%; border-radius: 999px;" aria-valuenow="{{ util }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <span class="small fw-bold text-main">{{ util }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="py-4">
+                            {{ ui.empty_state(title="No Sections Found", message="No active sections found for this selected semester.", icon="bi-inbox") }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="py-5 text-center">
+            {{ ui.empty_state(title="Select a Semester", message="Please choose an academic semester above to inspect section enrollment statistics.", icon="bi-calendar-event") }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

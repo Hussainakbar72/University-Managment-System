@@ -1,0 +1,9 @@
+
+### Demo Accounts for Verification
+
+| Role | Email | Password | Primary Responsive Feature |
+|:---|:---|:---|:---|
+| **ADMIN** | `admin@ums.edu` | `Admin@123` | Offcanvas drawer search, 60+ links, stacked user table cards |
+| **TEACHER** | `dr.tariq@ums.edu` | `Teacher@123` | Assigned sections cards, horizontal-scroll timetable |
+| **STUDENT** | `ali.raza@ums.edu` | `Student@123` | Fluid attendance conic rings, fee balance card in PKR |
+| **STAFF** | `staff.kamran@ums.edu` | `Staff@123` | Campus Services portal (Hostel, Transport, Library) |

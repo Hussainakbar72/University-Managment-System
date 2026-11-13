@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-9 col-lg-10">
+        <div class="glass-card glass-card-dense mb-4">
+            <!-- Form Header -->
+            <div class="p-3 p-md-4 border-bottom border-light border-opacity-25 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div>
+                    <h2 class="fs-5 fw-bold text-main mb-1">{{ title }}</h2>
+                    <p class="text-muted small mb-0">Fill in the required information and save your changes.</p>
+                </div>
+                {% if back_url %}
+                <a href="{{ back_url }}" class="btn btn-glass btn-sm" style="min-height: 38px; display: inline-flex; align-items: center;">
+                    <i class="bi bi-arrow-left me-1"></i> Return
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Form Body with 2-Column Responsive Layout -->
+            <div class="p-3 p-md-5">
+                <form method="POST" novalidate id="crudForm">
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3 g-md-4">
+                        {% for field in form %}
+                            {% if field.type not in ['CSRFTokenField', 'SubmitField'] %}
+                                {# Full-width for textareas, booleans, and long descriptions; 2-column (col-md-6) for inputs/selects #}
+                                {% set is_full_width = (field.type in ['TextAreaField', 'BooleanField'] or (field.name in ['description', 'address', 'details', 'content', 'syllabus'])) %}
+                                <div class="{{ 'col-12' if is_full_width else 'col-md-6' }}">
+                                    {% if field.type == 'BooleanField' %}
+                                        <div class="glass-card p-3 d-flex align-items-center justify-content-between" style="background: var(--glass-bg-subtle); min-height: 48px;">
+                                            <div>
+                                                <label class="form-check-label fw-bold text-main d-block" for="{{ field.id }}">
+                                                    {{ field.label.text }}
+                                                </label>
+                                                {% if field.description %}
+                                                <small class="text-muted" style="font-size: 0.78rem;">{{ field.description }}</small>
+                                                {% endif %}
+                                            </div>
+                                            <div class="form-check form-switch mb-0">
+                                                {{ field(class="form-check-input", role="switch", style="width: 2.5em; height: 1.25em;") }}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <label for="{{ field.id }}" class="form-label fw-semibold">
+                                            {{ field.label.text }}
+                                            {% if field.flags.required %}
+                                            <span class="text-danger" title="Required field">*</span>
+                                            {% endif %}
+                                        </label>
+
+                                        {% if field.errors %}
+                                            {% if field.type == 'SelectField' %}
+                                                {{ field(class="form-select glass-input is-invalid", id=field.id) }}
+                                            {% elif field.type == 'TextAreaField' %}
+                                                {{ field(class="form-control glass-input is-invalid", rows="3", id=field.id) }}
+                                            {% else %}
+                                                {{ field(class="form-control glass-input is-invalid", id=field.id) }}
+                                            {% endif %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}
+                                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}<br>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {% if field.type == 'SelectField' %}
+                                                {{ field(class="form-select glass-input", id=field.id) }}
+                                            {% elif field.type == 'TextAreaField' %}
+                                                {{ field(class="form-control glass-input", rows="3", id=field.id) }}
+                                            {% else %}
+                                                {{ field(class="form-control glass-input", id=field.id) }}
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if field.description and field.type != 'BooleanField' %}
+                                            <div class="form-text mt-1 text-muted" style="font-size: 0.8rem;">{{ field.description }}</div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Sticky Glass Action Bar -->
+                    <div class="sticky-action-bar mt-4 mt-md-5 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div>
+                            {% if back_url %}
+                            <a href="{{ back_url }}" class="btn btn-glass" style="min-height: 44px; display: inline-flex; align-items: center;">
+                                <i class="bi bi-x-lg me-1"></i> Cancel
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="submit" class="btn btn-primary px-4 shadow" style="min-height: 44px; display: inline-flex; align-items: center;">
+                                <i class="bi bi-check2-circle me-1"></i> Save Record
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,281 @@
+/* ==========================================================================
+   GLASS.CSS - Glassmorphism Surfaces, Orbs, and Robust Fallbacks
+   University Management System - Glassmorphism UI
+   ========================================================================== */
+
+/* Full Viewport Background with Soft Radial Orbs */
+body {
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  background: var(--bg-gradient);
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Pure-CSS Radial Ambient Mesh Lighting on Fixed Pseudo-Element */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--orbs-opacity);
+  overflow: clip;
+  background:
+    /* Royal Sapphire orb top-left */
+    radial-gradient(circle 600px at 12% 15%, rgba(37, 99, 235, 0.25), transparent 70%),
+    /* Cyber Cyan orb top-right */
+    radial-gradient(circle 650px at 88% 12%, rgba(6, 182, 212, 0.22), transparent 70%),
+    /* Vibrant Violet orb bottom-left */
+    radial-gradient(circle 550px at 15% 85%, rgba(124, 58, 237, 0.18), transparent 70%),
+    /* Fresh Mint Emerald orb bottom-right */
+    radial-gradient(circle 580px at 85% 82%, rgba(16, 185, 129, 0.16), transparent 70%);
+  background-attachment: fixed;
+}
+
+[data-bs-theme="dark"] body::before {
+  background:
+    /* Luminous Sapphire orb top-left */
+    radial-gradient(circle 650px at 12% 15%, rgba(37, 99, 235, 0.28), transparent 70%),
+    /* Neon Cyan orb top-right */
+    radial-gradient(circle 700px at 88% 12%, rgba(6, 182, 212, 0.22), transparent 70%),
+    /* Radiant Violet orb bottom-left */
+    radial-gradient(circle 600px at 15% 85%, rgba(139, 92, 246, 0.20), transparent 70%),
+    /* Deep Aqua Glow orb bottom-right */
+    radial-gradient(circle 600px at 85% 82%, rgba(20, 184, 166, 0.18), transparent 70%);
+}
+
+/* Core Glass Container Surface */
+.glass-panel {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-xl);
+  box-sizing: border-box;
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Glass Card Variant */
+.glass-card {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+  container-type: inline-size;
+}
+
+.glass-card-hover {
+  cursor: pointer;
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--glass-highlight), var(--glass-shadow-hover);
+}
+
+/* Denser Glass for Tables and Modals to ensure optimal readability & 60fps performance */
+.glass-card-dense,
+.glass-modal,
+.modal-content.glass-card {
+  background: var(--glass-bg-dense);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+}
+
+/* Floating Glass Sidebar */
+.glass-sidebar {
+  background: var(--glass-bg-dense);
+  border: var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  margin: 16px;
+  height: calc(100dvh - 32px);
+  max-height: calc(100dvh - 32px);
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1020;
+}
+
+/* Sticky Glass Topbar */
+.glass-topbar {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-highlight), var(--glass-shadow-sm);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  margin-bottom: 24px;
+}
+
+/* Glass Inputs & Select Controls */
+.glass-input,
+.form-control,
+.form-select {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--text-main) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0.65rem 1rem !important;
+  font-size: 0.95rem;
+  min-height: var(--touch-target-min, 44px) !important;
+  box-shadow: var(--glass-highlight);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+}
+
+@media (max-width: 767.98px) {
+  .glass-input,
+  .form-control,
+  .form-select {
+    font-size: 1rem !important; /* 16px to prevent iOS Safari auto-zoom */
+  }
+
+  .glass-panel,
+  .glass-card,
+  .glass-sidebar,
+  .glass-topbar,
+  .modal-content.glass-card {
+    -webkit-backdrop-filter: blur(var(--glass-blur-mobile, 8px)) saturate(130%) !important;
+    backdrop-filter: blur(var(--glass-blur-mobile, 8px)) saturate(130%) !important;
+  }
+}
+
+.glass-input:focus,
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--input-focus-border) !important;
+  box-shadow: var(--input-focus-glow) !important;
+  background: var(--glass-bg-hover) !important;
+  outline: none;
+}
+
+.glass-input::placeholder,
+.form-control::placeholder {
+  color: var(--text-light) !important;
+}
+
+/* Solid-Color Fallbacks for Browsers without Backdrop-Filter */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .glass-card,
+  .glass-sidebar,
+  .glass-topbar,
+  .modal-content.glass-card {
+    background: var(--bg-solid-fallback) !important;
+    border: 1px solid rgba(203, 213, 225, 0.8) !important;
+  }
+  [data-bs-theme="dark"] .glass-panel,
+  [data-bs-theme="dark"] .glass-card,
+  [data-bs-theme="dark"] .glass-sidebar,
+  [data-bs-theme="dark"] .glass-topbar,
+  [data-bs-theme="dark"] .modal-content.glass-card {
+    background: #141724 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
+}
+
+/* Accessibility: User Prefers Reduced Transparency */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel,
+  .glass-card,
+  .glass-sidebar,
+  .glass-topbar,
+  .modal-content.glass-card {
+    background: var(--bg-solid-fallback) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  [data-bs-theme="dark"] .glass-panel,
+  [data-bs-theme="dark"] .glass-card,
+  [data-bs-theme="dark"] .glass-sidebar,
+  [data-bs-theme="dark"] .glass-topbar,
+  [data-bs-theme="dark"] .modal-content.glass-card {
+    background: #121522 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Accessibility: User Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .glass-card-hover:hover {
+    transform: none !important;
+  }
+}
+
+/* Mobile Performance: Lower blur on small screens */
+@media (max-width: 768px) {
+  .glass-panel,
+  .glass-card,
+  .glass-sidebar,
+  .glass-topbar {
+    -webkit-backdrop-filter: blur(8px) saturate(130%) !important;
+    backdrop-filter: blur(8px) saturate(130%) !important;
+  }
+  body::before {
+    opacity: 0.55;
+  }
+}
+
+/* Print Optimization: Clean high-contrast monochrome output */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  body::before {
+    display: none !important;
+  }
+  .glass-panel,
+  .glass-card,
+  .glass-sidebar,
+  .glass-topbar {
+    background: transparent !important;
+    border: 1px solid #DDDDDD !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .glass-sidebar,
+  .glass-topbar,
+  .btn,
+  .theme-toggle-btn,
+  .toast-container {
+    display: none !important;
+  }
+}
+
+/* Mobile layout constraints & gutter safety */
+#wrapper {
+  overflow-x: clip;
+}
+
+@media (max-width: 575.98px) {
+  .row {
+    --bs-gutter-x: 1rem;
+  }
+}
